@@ -29,7 +29,6 @@ app.use(
 );
 
 app.use("/images", express.static("images"));
-app.use(cors());
 io.on("connection", (socket) => {
   socket.on("ROOM:JOIN", async ({ roomId, userName }) => {
     socket.join(roomId);
