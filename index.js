@@ -18,8 +18,7 @@ const protocol = http;
 const server = protocol.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: true,
-    credentials: true,
+    origin: "*",
   },
   allowEIO3: true,
 });
