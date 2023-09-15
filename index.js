@@ -94,7 +94,6 @@ io.on("connection", (socket) => {
     socket.broadcast.to(obj.roomId).emit("ROOM:DELETE_MESSAGE", newmessages);
   });
 });
-const rooms = new Map();
 app.get("/rooms/:id", async (req, res) => {
   const room = await RoomSchema.findOne({ roomId: req.params.id });
   if (room) {
