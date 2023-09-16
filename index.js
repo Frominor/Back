@@ -153,7 +153,7 @@ app.get("/", (req, res) => {
     message: "123321",
   });
 });
-server.listen(5000, (err) => {
+server.listen(3005, (err) => {
   if (err) {
     return "Ошибка";
   } else {
