@@ -138,7 +138,11 @@ app.post("/rooms", async (req, res) => {
   }
 });
 mongoose
-  .connect("mongodb://127.0.0.1:27017/usersdb")
+  .connect("mongodb://127.0.0.1:27017/usersdb", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    family: 4,
+  })
   .then((res) => {
     console.log("норм");
   })
