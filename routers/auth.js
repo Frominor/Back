@@ -10,6 +10,7 @@ authRouter.get("/getMe/:token", async (req, res) => {
     const decode = jwtDecode(jwttoken);
     const user = await UserSchema.findById(decode.user._id);
     if (!user) {
+      res.header("Access-Control-Allow-Origin", "*");
       return res.json({});
     }
     const token = jwt.sign(
@@ -19,6 +20,7 @@ authRouter.get("/getMe/:token", async (req, res) => {
       },
       "secret123"
     );
+    res.header("Access-Control-Allow-Origin", "*");
     return res.json({
       user,
       token,
@@ -75,6 +77,7 @@ authRouter.post("/login", UserLoginModel, async (req, res) => {
         },
         "secret123"
       );
+      res.header("Access-Control-Allow-Origin", "*");
       return res.json({
         message: "Вход успешен",
         user,
