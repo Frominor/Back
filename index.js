@@ -138,16 +138,7 @@ app.post("/rooms", async (req, res) => {
   }
 });
 mongoose
-  .connect("mongodb://127.0.0.1:27017/usersdb", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000,
-    autoIndex: false, // Don't build indexes
-    maxPoolSize: 10, // Maintain up to 10 socket connections
-    serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-    family: 4, // Use IPv4, skip trying IPv6
-  })
+  .connect("mongodb://127.0.0.1:27017/usersdb")
   .then((res) => {
     console.log("норм");
   })
@@ -162,7 +153,7 @@ app.get("/", (req, res) => {
     message: "123321",
   });
 });
-server.listen(3005, (err) => {
+server.listen(5000, (err) => {
   if (err) {
     return "Ошибка";
   } else {
