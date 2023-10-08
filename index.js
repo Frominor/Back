@@ -19,9 +19,12 @@ const protocol = http;
 const server = protocol.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: [
+      "https://chat-front-kohl.vercel.app",
+      "chat-front-kohl.vercel.app",
+    ],
+    credentials: false,
   },
-  allowEIO3: true,
 });
 app.use(
   fileUpload({
