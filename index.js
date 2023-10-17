@@ -13,6 +13,7 @@ import MessageSchema from "./Schema/MessageSchema.js";
 import RoomSchema from "./Schema/RoomSchema.js";
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 const protocol = http;
 const server = protocol.createServer(app);
@@ -41,43 +42,42 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("ROOM:JOINED", messages);
   });
   socket.on("disconnect", () => {
-    rooms.forEach((value, roomId) => {
-      if (value.get("users").delete(socket.id)) {
-        const users = [...rooms.get(roomId).get("users").values()];
-        socket.broadcast.to(roomId).emit("ROOM:LEAVE", users);
-      }
-    });
+    // const rooms=
+    // rooms.forEach((value, roomId) => {
+    //   if (value.get("users").delete(socket.id)) {
+    //     const users = [...rooms.get(roomId).get("users").values()];
+    //     socket.broadcast.to(roomId).emit("ROOM:LEAVE", users);
+    //   }
+    // });
   });
   socket.on(
     "ROOM:NEW_MESSAGE",
-    async ({ roomId, userName, text, date, UserId, audioMessage }) => {
-      if (text) {
-        const user = await UserSchema.findById(UserId);
-        console.log(user._doc);
-        const room = await RoomSchema.findOne({ roomId });
-        const message = new MessageSchema({
-          message: text,
-          user: user._doc,
-          userInfo: user._doc,
-          date: date,
-        });
-        await message.save();
-        room.messages.push(message);
-        await RoomSchema.findOneAndUpdate(
-          { roomId },
-          { messages: room.messages }
-        );
-        socket.broadcast.to(roomId).emit("ROOM:NEW_MESSAGE", message);
-      } else {
-        const obj = {
-          userName,
-          audioMessage,
-          date,
-          UserId,
-        };
-        rooms.get(roomId)?.get("messages").push(obj);
-        socket.broadcast.to(roomId).emit("ROOM:NEW_MESSAGE", obj);
-      }
+    async ({
+      roomId,
+      text,
+      date,
+      UserId,
+      Images = [],
+      AudioMessage = null,
+    }) => {
+      const user = await UserSchema.findById(UserId);
+
+      const room = await RoomSchema.findOne({ roomId });
+      const message = new MessageSchema({
+        message: text,
+        user: user._doc,
+        userInfo: user._doc,
+        Images: Images,
+        date: date,
+        AudioMessage,
+      });
+      await message.save();
+      room.messages.push(message);
+      await RoomSchema.findOneAndUpdate(
+        { roomId },
+        { messages: room.messages }
+      );
+      socket.broadcast.to(roomId).emit("ROOM:NEW_MESSAGE", message);
     }
   );
   socket.on("ROOM:DELETE_MESSAGE", async (obj) => {
@@ -138,16 +138,7 @@ app.post("/rooms", async (req, res) => {
   }
 });
 mongoose
-  .connect("mongodb://127.0.0.1:27017/usersdb", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000,
-    autoIndex: false, // Don't build indexes
-    maxPoolSize: 10, // Maintain up to 10 socket connections
-    serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-    socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-    family: 4, // Use IPv4, skip trying IPv6
-  })
+  .connect("mongodb://127.0.0.1:27017/usersdb")
   .then((res) => {
     console.log("норм");
   })
@@ -162,7 +153,7 @@ app.get("/", (req, res) => {
     message: "123321",
   });
 });
-server.listen(3005, (err) => {
+server.listen(5000, (err) => {
   if (err) {
     return "Ошибка";
   } else {

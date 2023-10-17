@@ -5,12 +5,13 @@ import jwt from "jsonwebtoken";
 import { UserLoginModel, UserRegisterModel } from "../model/UserModel.js";
 export const authRouter = Router();
 authRouter.get("/getMe/:token", async (req, res) => {
+  console.log();
   try {
     const jwttoken = req.params.token;
     const decode = jwtDecode(jwttoken);
     const user = await UserSchema.findById(decode.user._id);
+    console.log(user);
     if (!user) {
-      res.header("Access-Control-Allow-Origin", "*");
       return res.json({});
     }
     const token = jwt.sign(
@@ -20,7 +21,7 @@ authRouter.get("/getMe/:token", async (req, res) => {
       },
       "secret123"
     );
-    res.header("Access-Control-Allow-Origin", "*");
+
     return res.json({
       user,
       token,
@@ -77,7 +78,7 @@ authRouter.post("/login", UserLoginModel, async (req, res) => {
         },
         "secret123"
       );
-      res.header("Access-Control-Allow-Origin", "*");
+
       return res.json({
         message: "Вход успешен",
         user,
